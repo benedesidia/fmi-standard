@@ -1,16 +1,16 @@
-This document defines the Functional Mock-up Interface (FMI), version 2.0.3. This is a maintenance release with no new features compared to FMI 2.0.
-FMI is a tool-independent standard to support both model exchange and co-simulation of dynamic models using a combination of XML files and C code (either compiled in DLL/shared libraries or in source code).
-The first version, FMI 1.0, was published in 2010.
-The FMI development was initiated by Daimler AG with the goal to improve the exchange of simulation models between suppliers and OEMs.
-As of today, development of the standard continues through the participation of many companies and research institutes.
-FMI 2.0 is supported by over 100 tools and is used by automotive and non-automotive organizations throughout Europe, Asia and North America.
+本ドキュメントは、Functional Mock-up Interface（FMI）バージョン2.0.3を定義しています。これは、FMI 2.0 と比較して新機能を持たないメンテナンスリリースです。
+FMIは、XMLファイルとCコード（DLL/共有ライブラリまたはソースコードにコンパイルされたもの）を組み合わせて、ダイナミックモデル（動的モデル）のモデル交換(model exchange)とコ・シミュレーション(coo-simulation)の両方をサポートする、ツールに依存しない標準規格です。
+最初のバージョンであるFMI 1.0は2010年に発表されました。
+FMIの開発は、ダイムラー社がサプライヤーとOEMの間でのシミュレーションモデルの交換を改善することを目的として開始しました。
+現在も、多くの企業や研究機関の参加を得て、規格の開発が続けられています。
+FMI 2.0は、100以上のツールでサポートされており、ヨーロッパ、アジア、北米の自動車メーカーおよび非自動車メーカーで使用されています。
 
-The downloads page (https://fmi-standard.org/downloads/) provides, this specification, as well as supporting C header and XML schema files, and an FMI compliance checker.
-In addition, sample models (exported from different tools in FMI format) are provided to assist tool vendors to ensure compatibility with other tools, as well as a test suite to check whether connected FMUs (Function Mock-up Units) are appropriately handled by a tool.
+ダウンロードページ（https://fmi-standard.org/downloads/）では、本仕様書のほか、サポートするC言語のヘッダーファイルやXMLスキーマファイル、FMI準拠チェックツールを提供しています。
+また、ツールベンダーが他のツールとの互換性を確保するためのサンプルモデル（異なるツールからFMIフォーマットでエクスポートされたもの）や、接続されたFMU（Function Mock-up Units）がツールによって適切に処理されているかどうかをチェックするテストスイートも提供されています。
 
-Contact the FMI development group at contact@fmi-standard.org.
+FMI開発グループ（contact@fmi-standard.org）までお問い合わせください。
 
-_History / Road Map_
+_履歴 / ロードマップ_
 
 [cols="1,1,4",options="header"]
 |====
@@ -20,28 +20,28 @@ _History / Road Map_
 
 |1.0
 |2010-01-26
-|First version of FMI for Model Exchange
+|モデル交換のためのFMIの最初のバージョン
 
 |1.0
 |2010-10-12
-|First version of FMI for Co-Simulation
+|コ・シミュレーションのためのFMIの最初のバージョン
 
 |2.0
 |2014-07-25
-|Second version of FMI for Model Exchange and Co-Simulation
+|モデル交換とコ・シミュレーションのためのFMIの第2版
 
 |2.0.1
 |2019-10-31
-|Bugfix/maintenance release of FMI for Model Exchange and Co-Simulation 2.0
+|モデル交換とコ・シミュレーションのためのFMI 2.0のバグフィックス/メンテナンス リリース
 
 |2.0.2
 |2020-12-15
-|Bugfix/maintenance release of FMI for Model Exchange and Co-Simulation 2.0
+|モデル交換とコ・シミュレーションのためのFMI 2.0のバグフィックス/メンテナンス リリース
 |====
 
 |2.0.3
 |2020-12-15
-|Bugfix/maintenance release of FMI for Model Exchange and Co-Simulation 2.0
+|モデル交換とコ・シミュレーションのためのFMI 2.0のバグフィックス/メンテナンス リリース
 |====
 
 

@@ -177,37 +177,32 @@ FMI 2.0は、FMI 1.0を大幅に改良したもので、FMI 1.0のモデル交�
 
 **この文書で使用されている規約**
 
-* Non-normative text is given in square brackets in italic font: _[Especially examples are defined in this style.]_
+* 規範とならない文章は、イタリックフォントで角括弧内に記載されています：_[特に例はこのスタイルで定義されています。]_
 
-* Arrays appear in two forms:
+* 配列には2つの形態があります。
 
-** In the end-user/logical view, one- and two-dimensional arrays are used.
-Here the convention of linear algebra,
-the control community and the most important tools in this area is utilized.
-In other words the first element along one dimension starts at index one.
-In all these cases,
-the starting index is also explicitly mentioned at the respective definition of the array.
-For example,
-in the modelDescription.xml file,
-the set of exposed variables is defined as ordered sets where the first
-element is referenced with index one
-(these indices are, for example,
-used to define the sparseness structure of partial derivative matrices).
+** エンドユーザー／論理的な視点では、1次元および2次元の配列が使用されます。
+ここでは、線形代数の慣習、制御コミュニティ、およびこの分野の最も重要なツールが利用されています。
+言い換えれば、1つの次元に沿った最初の要素は、インデックス1から始まります。
+これらのケースでは、開始インデックスは、配列のそれぞれの定義で明示的に言及されています。
+例えば、modelDescription.xmlファイルでは、公開された変数のセットが順序付きセットとして
+定義されており、最初の要素がインデックス1で参照されています（これらのインデックスは、
+例えば偏微分行列のスパースネス構造を定義するために使用されます）。
 
-** In the implementation view, one-dimensional C arrays are used.
-In order to access an array element the C convention is used.
-For example,
-the first element of input argument `x` for function `setContinuousStates(..)` is `x[0]`.
+** 実装ビューでは、1次元のC配列が使用されます。
+配列の要素にアクセスするには，C言語の規約が用いられる。
+例えば，以下のようになります．関数`setContinuousStates(...)`の入力引数`x`の最初の
+要素は`x[0]`である。
 
-** _[Clarification for FMI 2.0.2: In the structured naming convention both 0- and 1-based array indexing is allowed.]_
+** _[FMI 2.0.2での明確化：構造化された命名規則では、0ベースと1ベースの両方の配列インデックスが認められています。]_
 
 
-**FMI 2.0 Implementation Help**
+**FMI 2.0実装に関するヘルプ**
 
-If you plan to export or import models in FMI 2.0 format, you may find the following tools/models helpful for your development (available from https://fmi-standard.org/downloads):
+FMI 2.0フォーマットのモデルをエクスポートまたはインポートする予定の方は、以下のツール/モデルが開発に役立つかもしれません（https://fmi-standard.org/downloads から入手可能）。
 
-FMU Compliance Checker:: Free software to check whether an FMI model is compliant to the FMI standard.
-FMUs from other tools:: In order to test the import of FMI models from other vendors in your tool, a set of test FMUs is provided.
-Library to test connected FMUs:: Free Modelica library to test difficult cases of connected FMI models.
-FMU Software Development Kit:: Free software development kit by QTronic to demonstrate basic use of FMI.
-FMI Library:: Free software package by Modelon that enables integration of FMI models in applications.
+FMU Compliance Checker:: FMIモデルがFMI規格に準拠しているかどうかをチェックするフリーソフトです。
+FMUs from other tools:: 他のベンダーのFMIモデルのインポートをツールでテストするために、テストFMUのセットが提供されています。
+Library to test connected FMUs:: 接続されたFMIモデルの難しいケースをテストするための無償のModelicaライブラリです。
+FMU Software Development Kit:: FMIの基本的な使い方をデモンストレーションするためのQTronic社の無償ソフトウェア開発キットです。
+FMI Library:: FMIモデルのアプリケーションへの統合を可能にするModelon社のフリーソフトウェアパッケージ。

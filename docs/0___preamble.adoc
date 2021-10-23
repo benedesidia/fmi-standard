@@ -44,18 +44,19 @@ _履歴 / ロードマップ_
 |====
 
 
-Please report issues that you find with this specification to the public FMI issue tracking system: https://trac.fmi-standard.org
+本仕様に関して発見された問題は、FMIの公開課題追跡システム（https://trac.fmi-standard.org）に報告してください。
 
-*License of this document*
+*このドキュメントのライセンス*
 
 [role=second-indented]
 Copyright (C) +
 2008-2011 MODELISAR consortium and +
 2012-2021 Modelica Association Project "FMI"
 
-This document is provided "as is" without any warranty.
-It is licensed under the CC-BY-SA (Creative Commons Attribution-Sharealike 4.0 International) license, which is the license used by Wikipedia.
-Human-readable summary of the license text from http://creativecommons.org/licenses/by-sa/4.0/ is as follows:
+本ドキュメントは、いかなる保証もなく「現状のまま」提供されます。
+この文書は、ウィキペディアで使用されているライセンスであるCC-BY-SA（Creative Commons Attribution-Sharealike 4.0 International）ライセンスのもとに提供されています。
+http://creativecommons.org/licenses/by-sa/4.0/ からのライセンステキストの人間が読める要約は以下の通りです。
+
 
 [cols="1"]
 |====
@@ -76,122 +77,105 @@ You may do so in any reasonable manner, but not in any way that suggests the lic
 *Share Alike* — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
 |====
 
-The legal license text and disclaimer is available at:
+法的なライセンステキストと免責事項は、以下のサイトでご覧いただけます。
 
 http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-Note:
+注:
 
 [role=indented2]
-Article (3a) of this license requires that modifications of this work must clearly label, demarcate or otherwise identify that changes were made.
+本ライセンスの第3a条では、本作品の改変は、変更が加えられたことを明確に表示、区分け、またはその他の方法で示す必要があります。
 
 [role=indented2]
-The C header and XML-schema files that accompany this document are available under the BSD 2-Clause license (http://www.opensource.org/licenses/bsd-license.html).
+この文書に添付されているC言語のヘッダーファイルとXML-schemaファイルは，BSD 2-Clauseライセンス（http://www.opensource.org/licenses/bsd-license.html）で提供されています。
 
 [role=indented2]
-Attention is drawn to the possibility that some of the elements of this document may be the subject of patent rights.
-Modelica Association shall not be held responsible for identifying such patent rights.
+この文書の一部の要素が特許権の対象となる可能性があることに注意を喚起します。
+Modelica Associationは、そのような特許権を特定する責任を負いません。
 
 [role=indented2]
-If you have improvement suggestions, please send them to the FMI development group at mailto:contact@fmi-standard.org.
+改善提案がありましたら、FMI開発グループ（mailto:contact@fmi-standard.org）までお送りください。
 
-**Abstract**
+**概要**
 
-This document defines the Functional Mock-up Interface (FMI),
-version 2.0.3 to (a) exchange dynamic models between tools and (b) define tool
-coupling for dynamic system simulation environments.
+本ドキュメントでは、ダイナミック・システム・シミュレーション環境において、(a)ツール間でのダイナミック・モデルの交換、
+(b)ツール間の結合を定義するためのFunctional Mock-up Interface (FMI), version 2.0.3を定義しています。
 
-_FMI for Model Exchange (chapter 3)_
+_モデル交換のためのFMI（第3章）_
 
-The intention is that a modeling environment can generate a C code representation of
-a dynamic system model that can be utilized by other modeling and simulation environments.
-Models are described by differential,
-algebraic and discrete equations with time-, state- and step-events.
-If the C code describes a continuous system,
-this system is solved with the integrators of the environment where it is used.
-The models to be treated by this interface can be large for usage in offline or online simulation,
-or they can be used in embedded control systems on microprocessors.
+これは、モデリング環境が、他のモデリングおよびシミュレーション環境で利用可能な、
+動的システムモデルのCコード表現を生成できることを意図したものです。
+モデルは、時間、状態、ステップイベントを伴う微分方程式、代数方程式、離散方程式によって記述されます。
+Cコードに連続系が記述されている場合、この系は使用される環境の積分器で解かれます。
+このインターフェースで扱われるモデルは、オフラインまたはオンライン・シミュレーションで使用するための大規模なものもあれば、
+マイクロプロセッサ上の組み込み制御システムで使用するものもあります。
 
-_FMI for Co-Simulation (chapter 4)_
+_コ・シミュレーションのためのFMI（第４章）_
 
-The intention is to provide an interface standard for coupling
-of simulation tools in a co-simulation environment.
-The data exchange between subsystems is restricted to discrete communication points.
-In the time between two communication points,
-the subsystems are solved independently from each other by their individual solver.
-Master algorithms control the data exchange between subsystems and the
-synchronization of all simulation solvers (slaves).
-Simple master algorithms,
-as well as more sophisticated ones are both supported.
-Note that the master algorithm itself is not part of the FMI standard.
+その意図は、コ・シミュレーション環境におけるシミュレーション・ツールの結合のためのインターフェース規格を提供することにあります。
+サブシステム間のデータ交換は、離散的な通信ポイントに制限されます。
+2つの通信ポイントの間の時間では、サブシステムはそれぞれのソルバーによって互いに独立して解かれます。
+マスター・アルゴリズムは、サブシステム間のデータ交換と、すべてのシミュレーション・ソルバー（スレーブ）の同期を制御します。
+シンプルなマスター・アルゴリズムと、より高度なマスター・アルゴリズムの両方がサポートされています。
+なお、マスター・アルゴリズム自体はFMI規格には含まれていません。
 
-_FMI Common Concepts (chapter 2)_
+_FMIの共通概念（第２章）_
 
-The two interface standards have many parts in common.
-In particular, it is possible to utilize several
-instances of a model and/or a co-simulation tool and to connect them together.
-The interfaces are independent of the target environment because no header files
-are used that depend on the target environment
-(with exception of the data types of the target platform).
-This allows generating one dynamic link library that can be utilized in any environment on the same platform.
-A model, a cosimulation slave or the coupling part of a tool,
-is distributed in one ZIP file called FMU (Functional Mockup Unit) that contains several files:
+この2つのインターフェース規格には、共通する部分が多くあります。
+特に、モデルやコ・シミュレーション・ツールの複数のインスタンスを利用し、それらを接続することが可能です。
+また、ターゲット環境に依存するヘッダーファイルを使用していないため、ターゲット環境に依存しないインターフェースとなっています
+（ターゲットプラットフォームのデータ型を除く）。
+これにより、同一プラットフォーム上のどの環境でも利用可能な1つのダイナミックリンクライブラリを生成することができます。
+モデル、コシミュレーション・スレーブ、ツールのカップリング部分は、FMU（Functional Mockup Unit）と呼ばれる
+複数のファイルを含む1つのZIPファイルで配布されます。
 
-. An XML file contains the definitions of all exposed variables in the FMU and other static information.
-It is then possible to run the FMU on a target system without this information,
-in other words with no unnecessary overhead.
+. XMLファイルには、FMUで公開されているすべての変数の定義やその他の静的情報が含まれています。
+この情報がなければ、ターゲットシステム上でFMUを実行することはできません。つまり、不必要なオーバーヘッドがないということです。
 
-. All required model equations or the access to co-simulation tools are provided with a small set of easy-to-use C functions.
-A new caching technique allows a more efficient evaluation of
-the model equations than in other approaches.
-These C functions can either be provided in source and/or binary form.
-Binary forms for different platforms can be included in the same FMU ZIP file.
+. 必要なモデル方程式やコ・シミュレーション・ツールへのアクセスは、使いやすいC言語の関数で提供されます。
+新しいキャッシング技術により、他のアプローチよりも効率的にモデル方程式を評価することができます。
+これらのC関数は、ソースまたはバイナリ形式で提供されます。
+異なるプラットフォーム用のバイナリ形式は、同じFMU ZIPファイルに含めることができます。
 
-. The model equations or the co-simuation tool can be either provided directly in the FMU,
-or the FMU contains only a generic communication module that communicates
-with an external tool that evaluates or simulates the model.
-In the XML file, information about the capabilities of the FMU are present,
-for example to characterize the ability of a co-simulation slave to support advanced master algorithms such as the usage of variable communication step sizes,
-higher order signal extrapolation, or others.
+. モデル方程式やコ・シミュレーションツールは、FMU内で直接提供することもできる。
+または、モデルの評価やシミュレーションを行う外部ツールと通信する汎用通信モジュールのみをFMUに搭載することも可能です。
+モデルの評価またはシミュレーションを行う外部ツールと通信する汎用通信モジュールのみを含むことができます。
+XMLファイルには、FMUの機能に関する情報が含まれています。例えば、コ・シミュレーション・スレーブが、可変の通信ステップ・サイズの使用など、
+高度なマスター・アルゴリズムをサポートする能力を特徴づけるために使用されます。高次信号の外挿など、
+高度なマスターアルゴリズムをサポートするコ・シミュレーションスレーブの能力を示す情報が含まれています。
 
-. Further data can be included in the FMU ZIP file,
-especially a model icon (bitmap file),
-documentation files,
-maps and tables needed by the FMU,
-and/or all object libraries or dynamic link libraries that are
-utilized.
+. FMU ZIPファイルには、特にモデルアイコン（ビットマップファイル）、ドキュメントファイル、FMUが必要とするマップやテーブル、
+および/または利用されるすべてのオブジェクトライブラリやダイナミックリンクライブラリなど、さらなるデータを含めることができます。
 
-A growing set of tools supports FMI.
-The actual list of tools is available at: https://www.fmi-standard.org/tools
+FMIをサポートするツールは増えています。
+ツールの実際のリストは、https://www.fmi-standard.org/tools でご覧いただけます。
 
-**About FMI 2.0.3**
+**FMI 2.0.3について**
 
-FMI 2.0.3 is a maintenance release with no new functional changes compared to FMI 2.0 or 2.0.1. +
-FMUs created according to FMI 2.0.2 are valid FMUs according to FMI 2.0 or 2.0.1.
-FMI 2.0.3 introducesminor clarifications that are mainly findings from the FMI3.0 development.
+FMI 2.0.3は、FMI 2.0または2.0.1と比較して新しい機能の変更がないメンテナンスリリースです。+
+FMI 2.0.2 に基づいて作成された FMU は、FMI 2.0 または 2.0.1 に基づいて有効な FMU です。
+FMI 2.0.3 では、主に FMI3.0 の開発から得られた知見を基に、若干の明確化を行っています。
 
-**About FMI 2.0.2**
+**FMI 2.0.2について**
 
-FMI 2.0.2 is a maintenance release with no new functional changes compared to FMI 2.0 or 2.0.1. +
-FMUs created according to FMI 2.0.2 are valid FMUs according to FMI 2.0 or 2.0.1.
-FMI 2.0.2. introduces the “/extra” directory as a standardized place to provide additional information for and FMU according to layered standards. +
-This is does not change the behavior of the FMU and clarifies the storage location for additional files (even after the creation of the FMU), e.g., required by layered standards.
+FMI 2.0.2は、FMI 2.0または2.0.1と比較して新しい機能の変更がないメンテナンスリリースです。+
+FMI 2.0.2 に従って作成された FMU は、FMI 2.0 または 2.0.1 に従って有効な FMU です。
+FMI 2.0.2では、階層化された規格に従ってFMUの追加情報を提供するための標準的な場所として、「/extra」ディレクトリが導入されています。+
+これは、FMUの動作を変更するものではなく、階層化された規格で要求されるなどの追加ファイル（FMUの作成後も）の保存場所を明確にするものである。
+
+**FMI 2.0.1について**
+
+FMI 2.0.1 はメンテナンスリリースで、FMI 2.0 と比較して新機能はありません。
+FMI 2.0.1 に基づいて作成された FMU は、FMI 2.0 に基づいて有効な FMU です。
+
+**FMI 2.0について**
+
+FMI 2.0は、FMI 1.0を大幅に改良したもので、FMI 1.0のモデル交換およびコ・シミュレーション規格を統合し、FMI 1.0規格を使用した際の実際の経験に基づいて、多くの改善点を取り入れています。
+新機能は通常、オプションです（FMUをエクスポートするツールでも、FMUをインポートするツールでもサポートする必要はない）。
+詳細は付録A.3.1に記載されている。
 
 
-**About FMI 2.0.1**
-
-FMI 2.0.1 is a maintenance release with no new features compared to FMI 2.0. FMUs created according to FMI 2.0.1 are valid FMUs according to FMI 2.0.
-
-**About FMI 2.0**
-
-FMI 2.0 was a major enhancement to FMI 1.0, that merges the FMI 1.0 Model Exchange and
-Co-Simulation standards and incorporates many improvements, often due to practical experience when using the FMI 1.0 standards.
-New features are usually optional
-(need neither be supported by the tool that exports an FMU, nor by the tool that imports an FMU).
-Details are provided in appendix A.3.1.
-
-
-**Conventions used in this Document**
+**この文書で使用されている規約**
 
 * Non-normative text is given in square brackets in italic font: _[Especially examples are defined in this style.]_
 

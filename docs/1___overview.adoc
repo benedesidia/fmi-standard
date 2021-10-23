@@ -10,42 +10,35 @@ FMUは独自のソルバーを持つこともあれば（「コ・シミュレ�
 簡単であることである。
 本ドキュメントでは、モデリング環境からFMUを生成する方法については規定していません。
 
-The [underline]#FMI for Model Exchange# interface defines an interface to the model
-of a dynamic system described by [underline]#differential#,
-[underline]#algebraic# and [underline]#discrete-time# equations.
-It provides an interface to evaluate these
-equations as needed in different [underline]#simulation environments#,
-as well as in [underline]#embedded control systems#,
-with explicit or implicit integrators, and fixed or variable step-size.
-The interface is designed to allow the
-description of large models.
+[underline]#FMI for Model Exchange#インターフェースは、[underline]#微分方程式#、
+[underline]#代数方程式#、[underline]#離散時間方程式#で記述される動的システムの
+モデルに対するインターフェースを定義します。
+このインターフェースは、さまざまな[underline]#シミュレーション環境#や[underline]#組み込み制御システム#において、
+明示的または暗黙的な積分器、固定または可変のステップサイズで、
+必要に応じてこれらの方程式を評価するためのインターフェースを提供します。
+インターフェースは、大規模なモデルの記述を可能にするように設計されています。
 
-The [underline]#FMI for Co-Simulation# interface is designed both for the [underline]#coupling of simulation tools#
-(simulator coupling, tool coupling),
-and coupling with subsystem models,
-which have been exported by their
-simulators together with its solvers as [underline]#runnable code#.
-The goal is to compute the solution of time-dependent
-coupled systems consisting of subsystems that are continuous in time (model components
-that are described by differential-algebraic equations) or are time-discrete (model components that are
-described by difference equations, for example discrete controllers).
-In a block representation of the coupled system,
-the subsystems are represented by blocks with (internal) state variables `x(t)` that are
-connected to other subsystems (blocks) of the coupled problem
-by subsystem inputs `u(t)` and subsystem outputs `y(t)`.
+[underline]#FMI for Co-Simulation#は、シミュレーションツールの結合（シミュレータ結合、ツール結合）と、
+シミュレータがソルバーとともに[underline]#実行可能なコード#としてエクスポートしたサブシステムモデルの結合の
+両方に対応するように設計されています。
+その目的は、時間的に連続したサブシステム（微分代数方程式で記述されたモデルコンポーネント）、
+または時間的に離散したサブシステム（差分方程式で記述されたモデルコンポーネント、
+例えば離散コントローラ）からなる時間依存の連成システムの解を計算することです。
+結合システムのブロック表現では、サブシステムは、（内部）状態変数 `x(t)` 
+を持つブロックで表され、サブシステム入力 `u(t)` とサブシステム出力 `y(t)` 
+によって結合問題の他のサブシステム（ブロック）に接続されます。
 
-In case of tool coupling,
-the modular structure of coupled problems is exploited in all stages of the
-simulation process beginning with the separate model setup and pre-processing for the individual
-subsystems in different simulation tools.
-During time integration, the simulation is again performed independently for all
-subsystems restricting the data exchange between subsystems to discrete _communication points_.
-Finally, the visualization and post-processing of simulation data is done
-individually for each subsystem in its own native simulation tool.
+ツールカップリングの場合、連成問題のモジュール構造は、シミュレーションプロセスのすべての段階で
+利用されます。まず、個々のサブシステムについて、異なるシミュレーションツールで個別にモデルを
+設定し、前処理を行います。
+時間統合の際には、シミュレーションはすべてのサブシステムで独立して実行され、
+サブシステム間のデータ交換は離散的な_通信ポイント_に制限されます。
+最後に、シミュレーションデータの視覚化と後処理は、各サブシステムごとに、
+それぞれのネイティブシミュレーションツールで行います。
 
-The two interfaces have large parts in common.
-These parts are defined in chapter 2.
-In particular:
+この2つのインターフェースには共通する大きな部分があります。
+これらの部分は第2章で定義されています。
+特に、以下の点です。
 
 - [underline]#FMI Application Programming Interface \(C)# +
 All required equations or tool coupling computations are evaluated by calling standardized [underline]#C functions#.
@@ -53,122 +46,113 @@ C is used
 because it is the most portable programming language today and is the only
 programming language that can be utilized in all embedded control systems.
 
+- [underline]#FMI Application Programming Interface \(C)# +
+標準化されたC言語の関数を呼び出すことで、必要な方程式やツールカップリングの計算を行うことが
+できます。C言語は、現在最もポータブルなプログラミング言語であり、すべての組み込み制御システム
+で使用できる唯一のプログラミング言語であるため、使用されています。
+
 - [underline]#FMI Description Schema (XML)# +
-The schema defines the structure and content of an XML file generated by a modeling environment.
-This XML file contains the definition of all variables of the FMU in a standardized way.
-It is then
-possible to run the C code in an embedded system without the overhead of the variable definition
-(the alternative would be to store this information in the C code and access it via function calls,
-but this is neither practical for embedded systems nor for large models).
-Furthermore, the variable definition is a complex data structure and tools should
-be free to determine how to represent this data structure in their programs.
-The selected approach allows a tool to store and access the variable definitions
-(without any memory or efficiency overhead of standardized access functions) in the programming
-language of the simulation environment,
-such as C++, C#, Java, or Python. Note that there are many free and commercial libraries
-in different programming languages to read XML files into an appropriate data structure.
-See for example http://en.wikipedia.org/wiki/XML#Parsers
-and especially the efficient open source parser SAX (http://sax.sourceforge.net/,
-http://en.wikipedia.org/wiki/Simple_API_for_XML).
+このスキーマは、モデリング環境によって生成されるXMLファイルの構造と内容を定義するものです。
+このXMLファイルには、FMUのすべての変数の定義が標準化された方法で含まれています。
+これにより、変数定義のオーバーヘッドなしに、組み込みシステムでCコードを実行することができます
+（この情報をCコードに格納し、関数呼び出しでアクセスするという方法もありますが、
+組み込みシステムや大規模なモデルでは実用的ではありません）。
+さらに、変数定義は複雑なデータ構造であり、このデータ構造をどのようにプログラムで表現するかは、
+ツールが自由に決定できるべきです。
+ここでは、C++、C#、Java、Python などのシミュレーション環境のプログラミング言語で、
+ツールが変数定義を（標準化されたアクセス関数によるメモリや効率のオーバーヘッドなしに）保存し、
+アクセスできるようにするアプローチを採用しています。
+なお、XMLファイルを適切なデータ構造に読み込むためのフリーおよび商用のライブラリが、
+さまざまなプログラミング言語で多数提供されています。
+例えば、http://en.wikipedia.org/wiki/XML#Parsers、特に効率的なオープンソースの
+パーサーであるSAXを参照してください（http://sax.sourceforge.net/, 
+http://en.wikipedia.org/wiki/Simple_API_for_XML）。
 
-An FMU (in other words a model without integrators,
-a runnable model with integrators,
-or a tool coupling interface) is distributed in one ZIP file.
-The ZIP file contains (more details are given in section 2.3):
+FMU (言い換えれば、インテグレータなしのモデル、インテグレータ付きの実行可能なモデル、
+またはツール・カップリング・インターフェース)は、1つのZIPファイルで配布されます。
+ZIPファイルの内容は以下の通りです（詳細は2.3項に記載）。
 
-- The FMI Description File (in XML format).
-- The C sources of the FMU,
-including the needed run-time libraries used in the model,
-and/or binaries for one or several target machines,
-such as Windows dynamic link libraries (.dll) or
-Linux shared object libraries (.so).
-The latter solution is especially used if the FMU provider
-wants to hide the source code to secure the contained know-how or to allow a fully automatic
-import of the FMU in another simulation environment.
-An FMU may contain physical parameters or geometrical dimensions,
-which should not be open.
-On the other hand,
-some functionality requires source code.
-- Additional FMU data (such as tables or maps) in FMU specific file formats.
+- FMI記述ファイル（XML形式）
+- FMUのCソース（モデルで使用される必要なランタイムライブラリを含む）、
+およびWindowsのダイナミックリンクライブラリ（.dll）やLinuxのシェアードオブジェクトライブラリ
+（.so）など、1つまたは複数のターゲットマシン用のバイナリーです。
+後者のソリューションは、FMUプロバイダが、含まれるノウハウを保護するためにソースコードを
+隠したい場合や、別のシミュレーション環境にFMUを完全に自動的にインポートできるようにしたい
+場合に特に使用されます。
+FMUには物理的なパラメータや幾何学的な寸法が含まれている場合がありますが、
+これらはオープンにすべきではありません。一方で、一部の機能はソースコードを必要とします。
+- FMU固有のファイル形式による追加のFMUデータ（表や地図など）
 
-A schematic view of an FMU is shown in Figure 1:
+FMUの概略図を図1に示します。
 
-.Data flow between the environment and an FMU.
-For details, see chapters 3 and 4.
-[blue]#Blue# arrows: Information provided by the FMU.
-[red]#Red# arrows: Information provided to the FMU.
-[caption="Figure 1: "]
+.環境とFMUの間のデータの流れ。
+詳しくは第3章、第4章をご覧ください。
+[blue]#青い#矢印：FMUが提供する情報です。
+[red]#赤い#矢印：FMUに提供される情報です。
+[caption="図 1: "]
 image::images/enclosing_model.svg[width=60%, align="center"]
 
-Publications for FMI are available from https://fmi-standard.org/literature/, 
-specially Blochwitz et.al. http://www.ep.liu.se/ecp/063/013/ecp11063013.pdf[2011] and http://www.ep.liu.se/ecp/076/017/ecp12076017.pdf[2012].
+FMIに関する出版物は、https://fmi-standard.org/literature/, 特にBlochwitz他によるものは
+http://www.ep.liu.se/ecp/063/013/ecp11063013.pdf[2011]や
+http://www.ep.liu.se/ecp/076/017/ecp12076017.pdf[2012]から入手できます。
 
+=== 特性と指針となる考え方
 
-=== Properties and Guiding Ideas
-
-In this section,
-properties are listed and some principles are defined that guided the low-level design of
-the FMI.
-This shall increase self consistency of the interface functions.
-The listed issues are sorted,
-starting from high-level properties to low-level implementation issues.
+このセクションでは、プロパティをリストアップし、FMIの低レベル設計の指針となるいくつかの原則を
+定義しています。
+これにより、インターフェース機能の自己整合性を高めることができます。
+リストアップされた問題は、高レベルのプロパティから低レベルの実装問題へとソートされています。
 
 [role=indented]
-_Expressivity_:
-The FMI provides the necessary features that Modelica(R), Simulink(R) and SIMPACK(R) models
-footnote:[Modelica is a registered trademark of the Modelica Association, Simulink is
-a registered trademark of the MathWorks Inc., SIMPACK is a registered trademark of SIMPACK AG.]
-can transform to an FMU.
+_表現性_:
+FMIは、Modelica(R)、Simulink(R)、SIMPACK(R) 
+footnote:[ModelicaはModelica Associationの登録商標であり、Simulinkは
+MathWorks Inc. はMathWorks Inc.の登録商標、SIMPACKはSIMPACK AGの登録商標です。]
+のモデルがFMUに変換するために必要な機能を提供します。
 
 [role=indented]
-_Stability_: The FMI is expected to be supported by many simulation tools worldwide.
-Implementing such
-support is a major investment for tool vendors.
-Stability and backwards compatibility of the FMI
-has therefore high priority.
-To support this, the FMI defines "capability flags" that will be used by
-future versions of the FMI to extend and improve the FMI in a backwards compatible way,
-whenever feasible.
+_安定性_: FMIは、世界中の多くのシミュレーションツールでサポートされることが期待されています。
+このようなサポートを実装することは ツールベンダーにとって大きな投資となります。
+そのため、FMIの安定性と後方互換性 の安定性と後方互換性は高い優先度を持っています。
+これをサポートするために、FMIでは「ケイパビリティフラグ」を定義しています。
+FMIの将来のバージョンで使用される「ケイパビリティフラグ」を定義しています。
+このフラグは、将来のバージョンのFMIで使用されます。
 
 [role=indented]
-_Implementation_:
-FMUs can be written manually or can be generated automatically from a modeling environment.
-Existing manually coded models can be transformed manually to a model according to the FMI standard.
+_実装_:
+FMUは、手動で記述することも、モデリング環境から自動的に生成することもできる。
+既存の手動でコード化されたモデルを、FMI規格に準拠したモデルに手動で変換することができます。
 
 [role=indented]
-_Processor independence_: It is possible to distribute an FMU without knowing the target processor.
-This allows an FMU to run on a PC,
-a Hardware-in-the-Loop simulation platform or as part of the controller software of an ECU,
-for example, as part of an AUTOSAR SWC.
-Keeping the FMU independent of the target processor increases the usability
-of the FMU and is even required by the AUTOSAR software component model.
-Implementation: Using a textual FMU (distribute the C
-source of the FMU).
+_プロセッサの独立性_: ターゲットとなるプロセッサを知らなくても、FMUを配布することができます。
+これにより、FMUをPC上で動作させることができます。Hardware-in-the-Loopシミュレーションプラットフォームや、
+ECUのコントローラソフトウェアの一部として動作させることができます。
+例えば、AUTOSAR SWCの一部として動作させることができます。
+FMUをターゲットプロセッサから独立させることで、FMUの使い勝手が向上し、
+AUTOSARのソフトウェアコンポーネントモデルでも要求されています。
+実装:テキスト形式のFMUを使用する（FMUのC言語ソースを配布）。
 
 [role=indented]
-_Simulator independence_: It is possible to compile,
-link and distribute an FMU without knowing the target simulator.
-Reason: The standard would be much less attractive otherwise,
-unnecessarily restricting the later use of an FMU at compile time
-and forcing users to maintain simulator specific variants of an FMU.
-Implementation: Using a binary FMU.
-When generating a binary FMU
-such as a Windows dynamic link library (.dll) or a Linux shared object library (.so),
-the target operating system and eventually the target processor must be known.
-However, no run-time libraries,
-source files or header files of the target simulator are needed to generate the binary FMU.
-As a result,
-the binary FMU can be executed by any simulator running on the target platform
-(provided the necessary licenses are available,
-if required from the model or from the used run-time libraries).
+_シミュレータの独立性_: 
+ターゲットとなるシミュレータを知らなくても、FMUをコンパイル、リンク、配布することができます。
+理由:コンパイル時にFMUの使用を不必要に制限したり、ユーザーがFMUのシミュレータ固有の
+バリエーションを維持することを強いることになるからである。
+
+実装:バイナリFMUを使用します。Windowsのダイナミックリンクライブラリ（.dll）や
+Linuxのシェアードオブジェクトライブラリ（.so）などのバイナリFMUを生成する際には、
+ターゲットとなるオペレーティングシステム、そして最終的にはターゲットとなるプロセッサを知る
+必要があります。
+しかし、バイナリFMUの生成には、ターゲット・シミュレータのランタイム・ライブラリ、
+ソース・ファイル、ヘッダ・ファイルは必要ありません。
+その結果、バイナリFMUは、ターゲット・プラットフォーム上で動作するどのようなシミュレータでも
+実行することができます（ただし、モデルや使用するランタイム・ライブラリから必要なライセンスが
+提供されている場合に限ります）。
 
 [role=indented]
-_Small run-time overhead_:
-Communication between an FMU and a target simulator through the FMI does
-not introduce significant run-time overhead.
-This is achieved by a new caching technique
-(to avoid computing the same variables several times)
-and by exchanging vectors instead of scalar quantities.
+_ランタイムオーバーヘッドが小さい_:
+FMUとターゲット・シミュレータの間でFMIを介して通信を行う場合、ランタイム・オーバーヘッドが
+大きくなることはありません。これは、新しいキャッシング技術（同じ変数を何度も計算することを
+避けるため）と、スカラー量の代わりにベクトルを交換することによって実現されています。
 
 [role=indented]
 _Small footprint_: A compiled FMU (the executable) is small.

@@ -1,11 +1,8 @@
-== FMI Common Concepts for Model Exchange and Co-Simulation
+== モデル交換とコ・シミュレーションに関するFMIの共通概念
 
-The concepts defined in this chapter are defined that are common for "model exchange" and "co-simulation".
-In both cases, FMI defines an input/output block of a dynamic model where the distribution of the block,
-the platform dependent header file, several access functions, as well as the schema files are identical.
-The definitions that are specific to the particular cases are defined in chapters 3 and 4.
+本章では、「モデル交換」と「コ・シミュレーション」に共通する概念を定義しています。
+どちらの場合も、FMIはダイナミックモデルの入出力ブロックを定義しており、ブロックの配布、プラットフォーム依存のヘッダーファイル、いくつかのアクセス関数、およびスキーマファイルは同一です。
+特定のケースに特有の定義は、第3章と第4章で定義されています。
 
-Below, the term __FMU__ (Functional Mock-up Unit) will be used as common term for a model in the "FMI for
-model exchange" format, or a co-simulation [underline]#slave# in the "FMI for co-simulation" format.
-Note that the
-interface supports [underline]#several instances# of [underline]#one FMU#.
+以下では、__FMU__（Functional Mock-up Unit）という用語を、「FMI for model exchange」形式のモデル、または「FMI for co-simulation」形式のコ・シミュレーション・[underline]#スレーブ#の共通用語として使用します。
+なお、このインターフェースは[underline]#1つのFMU#の[underline]#複数のインスタンス#をサポートしています。

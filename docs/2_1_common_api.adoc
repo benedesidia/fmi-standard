@@ -324,43 +324,35 @@ _[1つのFMUのみをシミュレートする場合、instanceName属性とし�
 連続したシステムのイベント間シミュレーションは、環境からの外部インテグレータを用いて 環境からの外部インテグレーターを用いて行われます（セクション3参照）。
 - = `fmi2CoSimulation`: コ・シミュレーションのためのブラックボックス・インターフェース（セクション4参照）。
 
-Argument `fmuGUID` is used to check that the `modelDescription.xml` file
-(see section 2.3) is compatible with the C code of the FMU.
-It is a vendor specific globally unique identifier of the XML file
-(for example, it is a "fingerprint" of the relevant information stored in the XML file).
-It is stored in the XML file as attribute "guid" (see section 2.2.1)
-and has to be passed to the `fmi2Instantiate` function via argument `fmuGUID`.
-It must be identical to the one stored inside the `fmi2Instantiate` function;
-otherwise the C code and the XML file of the FMU are not consistent with each other.
-This argument cannot be null.
+引数 `fmuGUID` は，`modelDescription.xml` ファイル（2.3節参照）がFMUのCコードと互換性があるかどうかを確認するために使用します．
+これは、XMLファイルのベンダー固有のグローバルに一意な識別子です（例えば、XMLファイルに格納されている関連情報の「フィンガープリント」です）。
+これは、XMLファイルの属性 "guid"（2.2.1項参照）として格納されており、`fmi2Instantiate`関数の引数`fmuGUID`に渡す必要があります。
+これは，`fmi2Instantiate`関数の内部に格納されているものと同一でなければなりません．
+さもなければ、C言語のコードとFMUのXMLファイルの整合性が取れません。
+この引数はNULLではありません。
 
-Argument `fmuResourceLocation` is a URI according to the
-http://datatracker.ietf.org/doc/rfc3986/[IETF RFC3986] syntax to indicate the location
-to the `resources` directory of the unzipped FMU archive.
-The following schemes must be understood by the FMU:
+引数 `fmuResourceLocation` は、次の構文によるURIです。
+http://datatracker.ietf.org/doc/rfc3986/[IETF RFC3986]の構文に従ったURIです。FMUアーカイブを解凍した際の`resources`ディレクトリへの位置を示すURIです。
+以下のスキームは、FMUによって理解されなければなりません。:
 
-- Mandatory: "file" with absolute path (either including or omitting the authority component)
-- Optional: "http", "https", "ftp"
-- Reserved: "fmi2" for FMI for PLM.
+- 必須項目です。"file "の絶対パス（オーソリティコンポーネントを含む、または含まない）。
+- 任意："http"、"https"、"ftp"
+- 予約済みです。FMI for PLM のための "fumi2" です。
 
-_[Example: An FMU is unzipped in directory "C:\temp\MyFMU", then fmuResourceLocation = "file:///C:/temp/MyFMU/resources" or "file:/C:/temp/MyFMU/resources".
-Function `fmi2Instantiate` is then able to read all needed resources from this directory,
-for example maps or tables used by the FMU.]_
+_[例 FMUを "C:temp\MyFMU "というディレクトリに解凍した場合、fmuResourceLocation = "file:///C:/temp/MyFMU/resources "または "file:/C:/temp/MyFMU/resources "となります。
+関数 `fmi2Instantiate` は、このディレクトリから、FMUが使用するマップやテーブルなど、必要なリソースをすべて読み込むことができます。]_
 
-Argument `functions` provides callback functions to be used from the FMU functions to utilize resources from the environment (see type `fmi2CallbackFunctions` below).
+引数 `functions` は、環境からのリソースを利用するために、FMUの機能から使用するコールバック関数を提供します（下記のタイプ `fmi2CallbackFunctions` を参照）。
 
-Argument `visible = fmi2False` defines that the interaction with the user should be reduced to a minimum
-(no application window, no plotting, no animation, etc.).
-In other words, the FMU is executed in batch mode.
-If `visible = fmi2True`,
-the FMU is executed in interactive mode, and the FMU might require to explicitly acknowledge start of
-simulation / instantiation / initialization (acknowledgment is non-blocking).
+引数 `visible = fmi2False` は、ユーザーとのインタラクションを最小限に抑えることを定義しています（アプリケーションウィンドウがない、プロットがない、アニメーションがない、など）。
+言い換えれば，FMUはバッチモードで実行されます．
+Visible = fmi2True`の場合、FMUはインタラクティブモードで実行され、FMUはシミュレーション/インスタンス化/初期化の開始を明示的に確認する必要があるかもしれません（確認はノンブロッキングです）。
 
-If `loggingOn = fmi2True`, debug logging is enabled. +
-If `loggingOn = fmi2False`, debug logging is disabled.
+If `loggingOn = fmi2True`, デバッグログが有効になります。 +
+If `loggingOn = fmi2False`, デバッグログが無効になります。
 
-_[The FMU enable/disables `LogCategories` which are useful for debugging according to this argument.
-Which `LogCategories` the FMU sets is unspecified.]_
+_[FMUは、この引数に従って、デバッグに役立つ`LogCategories`を有効／無効にします。
+FMUがどの`LogCategories`を設定するかは未設定です。]_
 
 [source, C]
 ----
@@ -378,15 +370,11 @@ typedef struct {
 } fmi2CallbackFunctions;
 ----
 
-The struct contains pointers to functions provided by the environment to be used by the FMU.
-It is not allowed to change these functions between `fmi2Instantiate(..)` and `fmi2Terminate(..)` calls.
-Additionally,
-a pointer to the environment is provided (componentEnvironment) that needs to be passed to the `logger` function,
-in order that the `logger` function can utilize data from the environment,
-such as mapping a `valueReference` to a string.
-In the unlikely case that `fmi2Component` is also needed in the `logger`,
-it has to be passed via argument `componentEnvironment`.
-Argument `componentEnvironment` may be a null pointer.
+この構造体には、FMUが使用するために環境が提供する関数へのポインタが含まれています。
+これらの関数を `fmi2Instantiate(...)` と `fmi2Terminate(...)` の間で変更することはできません。
+さらに、`logger`関数が環境からのデータを利用できるように、`valueReference`を文字列にマッピングするなど、`logger`関数に渡す必要のある環境へのポインタ（componentEnvironment）が提供されます。
+万が一、`fmi2Component`が`logger`でも必要になる場合は、引数componentEnvironment`を介して渡す必要があります。
+引数 `componentEnvironment` には null ポインタを指定できます。
 
 The `componentEnvironment` pointer is also passed to the `stepFinished(..)` function in order
 that the environment can provide an efficient way to identify the slave that called `stepFinished(..)`.

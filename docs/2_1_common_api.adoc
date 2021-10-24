@@ -376,39 +376,34 @@ typedef struct {
 万が一、`fmi2Component`が`logger`でも必要になる場合は、引数componentEnvironment`を介して渡す必要があります。
 引数 `componentEnvironment` には null ポインタを指定できます。
 
-The `componentEnvironment` pointer is also passed to the `stepFinished(..)` function in order
-that the environment can provide an efficient way to identify the slave that called `stepFinished(..)`.
+componentEnvironment` ポインタは、`stepFinished(...)` 関数にも渡されます。これは、`stepFinished(...)` を呼び出したスレーブを特定するための効率的な方法を環境が提供するためです。
 
-In the default `fmi2FunctionTypes.h` file,
-typedefs for the function definitions are present to simplify the usage;
-this is non-normative.
-The functions have the following meaning:
+デフォルトの `fmi2FunctionTypes.h` ファイルでは．使い方を簡単にするために、関数定義の型定義があります。これは規範的ではありません。
+関数の意味は次のとおりです。:
 
-Function *logger*:
-Pointer to a function that is called by the FMU _[usually if an `fmi2XXX` function does not behave as desired]_.
-If `status = fmi2OK`, the message is a pure information message.
-`instanceName` is the name of the FMU instance that calls this function.
-`category` is the category of the message.
+関数*logger*:
+FMUによって呼び出される関数へのポインタ _[通常、`fmi2XXX`関数が希望通りに動作しない場合]_です。
+status = fmi2OK`の場合、メッセージは純粋な情報メッセージです。
+instanceName` はこの関数を呼び出した FMU インスタンスの名前です。
+category` はメッセージのカテゴリーです。
 
-The allowed values for `category` are defined in the `modelDescription.xml` file via the element `<fmiModelDescription><LogCategories>`, see section 2.2.4.
-`logger` should only be called for log categories that were enabled by a call to `fmi2SetDebugLogging` (see below) or via `loggingOn = fmi2True` in `fmi2Instantiate`.
-If the FMU does not define any log categories, `category` must be `NULL`.
-Argument `message` is a string that contains the message to log.
-It may contain line-breaks (`\n`), but should not have a trailing line break and is provided in the same way and with the
-same format control as in function `printf` from the C standard library. +
-_[Typically, this function prints the message and stores it optionally in a log file.]_
+`category`の許容値は、`modelDescription.xml`ファイルの<fmiModelDescription><LogCategories>`という要素で定義されています(2.2.4項参照)。
+logger` は、`fmi2SetDebugLogging` (下記参照) の呼び出し、または `fmi2Instantiate` の `loggingOn = fmi2True` によって有効になったログカテゴリに対してのみ呼び出す必要があります。
+FMUがログカテゴリを定義していない場合、`category`は`NULL`でなければなりません。
+引数の `message` は、ログに記録するメッセージを含む文字列です。
+改行を含んでもかまいませんが、最後に改行があってはいけませんし、関数 `printn` と同じ方法、同じフォーマット制御で提供されます。C標準ライブラリの関数`printf`と同じ方法、同じフォーマット制御で提供されます。+
+_[通常、この関数はメッセージを印刷し、オプションでログファイルに保存します]_。
 
-All string-valued arguments passed by the FMU to the `logger` may be deallocated by the FMU directly after function `logger` returns.
-_[The simulation environment must therefore create copies of these strings if it needs to access these strings later.]_ +
+FMUから`logger`に渡されたすべての文字列値の引数は、関数`logger`が戻った後、FMUによって直接解放されることがあります。
+_[そのため、シミュレーション環境では、後でこれらの文字列にアクセスする必要がある場合、これらの文字列のコピーを作成する必要があります]_。+
 
-Variables are referenced in a message with `\#<Type><ValueReference>#` where <Type> is "r" for `fmi2Real`,
-"i" for `fmi2Integer`, "b" for `fmi2Boolean` and "s" for `fmi2String`.
-If character `pass:[#]` shall be included in the message,
-it has to be prefixed with `pass:[#]`, so `#` is an escape character.
-_[Example:_
+ここで，<Type>は`fmi2Real`の "r"，`fmi2Integer`の "i"，`fmi2Boolean`の "b"，`fmi2String`の "s "です．
+「i "は`fmi2Integer`、"b "は`fmi2Boolean`、"s "は`fmi2String`となります。
+文字 `pass:[#]` をメッセージに含める場合は、その前に `pass:[#]` を付ける必要があります。
+文字`pass:[#]`がメッセージに含まれる場合は、`pass:[#]`を前置しなければならないので、`#`はエスケープ文字となります。
+_[例:_ +
 
-
-_A message of the form "\#r1365#" must be larger than zero (used in IO channel ##4)"_ +
+_A message of the form "\#r1365# must be larger than zero (used in IO channel ##4)"_ +
 _might be changed by the `logger` function to_ +
 _`"body.m must be larger than zero (used in IO channel #4)"`_ +
 _if `"body.m"` is the name of the `fmi2Real` variable with `fmi2ValueReference = 1365`.]_

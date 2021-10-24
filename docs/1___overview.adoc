@@ -6,11 +6,11 @@ FMUは独自のソルバーを持つこともあれば（「コ・シミュレ�
 このインターフェースの目的は、シミュレーション環境におけるFMUの呼び出しが合理的に簡単であることです。
 本ドキュメントでは、モデリング環境からFMUを生成する方法については規定していません。
 
-[underline]#FMI for Model Exchange#インターフェースは、[underline]#微分方程式#、[underline]#代数方程式#、[underline]#離散時間方程式#で記述される動的システムのモデルに対するインターフェースを定義します。
+ [underline]#FMI for Model Exchange#インターフェースは、[underline]#微分方程式#、[underline]#代数方程式#、[underline]#離散時間方程式#で記述される動的システムのモデルに対するインターフェースを定義します。
 このインターフェースは、さまざまな[underline]#シミュレーション環境#や[underline]#組み込み制御システム#において、明示的または暗黙的な積分器、固定または可変のステップサイズで、必要に応じてこれらの方程式を評価するためのインターフェースを提供します。
 インターフェースは、大規模なモデルの記述を可能にするように設計されています。
 
-[underline]#FMI for Co-Simulation#は、シミュレーションツールの結合（シミュレータ結合、ツール結合）と、シミュレータがソルバーとともに[underline]#実行可能なコード#としてエクスポートしたサブシステムモデルの結合の両方に対応するように設計されています。
+ [underline]#FMI for Co-Simulation#は、シミュレーションツールの結合（シミュレータ結合、ツール結合）と、シミュレータがソルバーとともに[underline]#実行可能なコード#としてエクスポートしたサブシステムモデルの結合の両方に対応するように設計されています。
 その目的は、時間的に連続したサブシステム（微分代数方程式で記述されたモデルコンポーネント）、または時間的に離散したサブシステム（差分方程式で記述されたモデルコンポーネント、例えば離散コントローラ）からなる時間依存の連成システムの解を計算することです。
 結合システムのブロック表現では、サブシステムは、（内部）状態変数 `x(t)`を持つブロックで表され、サブシステム入力`u(t)`とサブシステム出力 `y(t)`によって結合問題の他のサブシステム（ブロック）に接続されます。
 
@@ -163,27 +163,27 @@ FMUによって割り当てられたメモリ（およびその他のリソー�
 理由：異なるコンポーネントの実行環境に互換性がないことによるメモリリークやランタイムエラーを防ぐことができます。
 
 [role=indented]
-_Immutable strings_:
-All strings passed as arguments or returned are read-only
-and must not be modified by the receiver.
-Reason: This eases the reuse of strings.
+_イミュータブルな文字列_:
+引数として渡された文字列や返された文字列はすべて読み取り専用であり、受信者が変更することはできません。
+理由： 文字列の再利用を容易にするためです。
 
 [role=indented]
-_Named list elements_:
-All lists defined in the `fmiModelDescription.xsd` XML schema file have a String
-attribute `name` to a list element.
-This attribute must be unique with respect to all other `name`
-attributes of the _same_ list.
+_名前付きリスト要素_:
+`fmiModelDescription.xsd`というXMLスキーマファイルで定義されているすべてのリストは、リスト要素にString属性の`name`を持ちます。
+この属性は、同じリストの他のすべての `name` 属性に対して一意でなければなりません。
 
 [role=indented]
-_Use C_:
-The FMI is encoded using C, not C++.
-Reason: Avoid problems with compiler and linker dependent behavior.
-Run FMU on embedded target.
+_Cの使用_:
+FMIはC++ではなくCでエンコードされています。
+理由:コンパイラやリンカに依存する動作の問題を避けるためです。
+組み込みターゲットでFMUを実行します。
 
 This version of the functional mock-up interface does
 [underline]#not# have the following desirable properties.
 They might be added in a future version.
+
+本バージョンの機能的モックアップ・インターフェースは、以下の望ましい特性を持って[underline]#いません#。
+これらは将来のバージョンで追加されるかもしれません。
 
 - The FMI for Model Exchange is for ordinary differential equations (ODEs) in state space form.
 It is not for a general differential-algebraic equation system.

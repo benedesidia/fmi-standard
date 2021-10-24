@@ -1,42 +1,35 @@
-=== FMI Application Programming Interface
+=== FMIアプリケーション・プログラミング・インターフェース
 
-This section contains the common interface definitions to execute functions of an FMU from a C program.
+このセクションでは、CプログラムからFMUの機能を実行するための共通インターフェース定義を記載しています。
 
-Note that he following general properties hold for an FMU:
+なお、FMUには以下のような一般的な性質があります。
 
-- FMI functions of one instance do not need to be thread-safe. +
-_[For example, if the functions of one instance of an FMU are accessed from more than one thread;
-the multi-threaded environment that uses the FMU must guarantee that the calling sequences of functions defined in section 3.2.3 and section 4.2.4. are used.
-The FMU itself does not implement any services to support this.]_
+- 1つのインスタンスのFMI関数は、スレッドセーフである必要はありません。 +
+_[例えば、FMUの1つのインスタンスの機能が複数のスレッドからアクセスされる場合。FMUを使用するマルチスレッド環境では、3.2.3項および4.2.4項で定義された関数の呼び出しシーケンスが使用されることを保証する必要があります。
+FMU自身は、これをサポートするサービスを実装していません。]_
 
-- FMI functions must not change global settings which affect other processes/threads.
-An FMI function may change settings of the process/thread in which it is called (such as floating point control registers),
-provided these changes are restored before leaving the function or before a callback function is called. +
-_[This property ensures that functions of different FMU instances can be called safely in any order.
-Additionally, they can be called in parallel provided the functions are called in different process/threads.
-If an FMI function changes for example the floating point control word of the CPU,
-it must restore the previous value before return of the function.
-For x86 CPUs, the floating point control word is set using the fldcw instruction.
-This can be used to switch on additional exceptions such as "floating point division by zero".
-An FMU might temporarily change the floating point control word and get notified on floating point exceptions internally,
-but has to restore the flag and clear the floating point status word before return of the respective FMI function.]_
+- FMI 関数は、他のプロセス/スレッドに影響するグローバル設定を変更してはいけません。
+FMI 関数は、呼び出されたプロセス／スレッドの設定（浮動小数点制御レジスタなど）を変更することができます。ただし、これらの変更は、関数を終了する前、またはコールバック関数が呼び出される前に復元されます。 +
+_[この特性により、異なるFMUインスタンスの関数を任意の順序で安全に呼び出すことができます。
+さらに、関数が異なるプロセス/スレッドで呼び出されていれば、並行して呼び出すことができます。
+FMI関数がCPUの浮動小数点制御ワードなどを変更した場合、関数が戻る前に以前の値に戻す必要があります。
+x86 CPUの場合、浮動小数点制御ワードはfldcw命令で設定されます。
+これは、「浮動小数点のゼロ除算」などの追加例外のスイッチを入れるために使用できます。
+FMUは一時的に浮動小数点制御ワードを変更し、内部的に浮動小数点例外の通知を受けることができますが、それぞれのFMI関数が戻る前にフラグを復元し、浮動小数点ステータス・ワードをクリアする必要があります。]_
 
 
-==== Header Files and Naming of Functions
+==== ヘッダーファイルと関数名の命名
 
-Three header files are provided that define the interface of an FMU.
-In all header files the convention is used that all C function and type definitions start with the prefix "[underline]#fmi2#":
+FMUのインターフェースを定義する3つのヘッダーファイルが用意されています。
+すべてのヘッダーファイルでは、C言語の関数や型の定義はすべて「[underline]#fumi2#」という接頭辞で始まるという規則が使われています。
 
 - `fmi2TypesPlatform.h` +
-contains the type definitions of the input and output arguments of the functions.
-This header file must
-be used both by the FMU and by the target simulator.
-If the target simulator has different definitions in
-the header file (for example, `**typedef float** fmi2Real` instead of `**typedef double** fmi2Real`),
-then the [underline]#FMU# needs to be [underline]#re-compiled# with the header file used by the [underline]#target simulator#.
-Note that the header file platform for which the model was compiled can be inquired in the target simulator with
-`fmi2GetTypesPlatform` (see section 2.1.4). +
-_[Example for a definition in this header file: +
+には、関数の入力引数と出力引数の型定義が含まれています。
+このヘッダファイルは，FMUとターゲットとなるシミュレータの両方で使用する必要があります。
+ターゲットとなるシミュレータでヘッダファイルの定義が異なる場合（例えば、`**typedef double** fmi2Real`の代わりに`**typedef float** fmi2Real`）、[underline]#ターゲットとなるシミュレータ#で使用されているヘッダファイルを用いて[underline]#FMU#を[underline]#再コンパイル#する必要があります。
+モデルがコンパイルされたヘッダファイルのプラットフォームは、ターゲットのシミュレータで次のように照会できます。
+fmi2GetTypesPlatform` (セクション 2.1.4 参照)。 +
+_[このヘッダーファイルでの定義の例: +
  `**typedef double** fmi2Real;` +
  ]_
 
@@ -44,7 +37,7 @@ _[Example for a definition in this header file: +
 contains `**typedef**` definitions of all function prototypes of an FMU.
 When dynamically loading an FMU,
 these definitions can be used to type-cast the function pointers to the respective function definition.
-_[Example for a definition in this header file: +
+_[このヘッダーファイルでの定義の例: +
  `**typedef** fmi2Status fmi2SetTimeTYPE(fmi2Component, fmi2Real);` +
  ]_
 
@@ -55,7 +48,7 @@ This header file includes `fmi2TypesPlatform.h` and
 `fmi2FunctionTypes.h`.
 The header file version number for which the model was compiled,
 can be inquired in the target simulator with `fmi2GetVersion` (see section 2.1.4).
-_[Example for a definition in this header file_ footnote:[For Microsoft and Cygwin compilers;
+_[このヘッダーファイルでの定義の例_ footnote:[For Microsoft and Cygwin compilers;
 `FMI2_Export` is defined as `pass:[__]declspec(dllexport)` and for Gnu-Compilers `FMI2_Export` is defined as `pass:[__]attribute__ ( ( visibility("default") ) )` in order to export the name for dynamic loading.
 Otherwise it is an empty definition.]: +
 _`FMI2_Export fmi2SetTimeTYPE fmi2SetTime;` +

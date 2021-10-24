@@ -6,7 +6,7 @@ FMUは独自のソルバーを持つこともあれば（「コ・シミュレ�
 このインターフェースの目的は、シミュレーション環境におけるFMUの呼び出しが合理的に簡単であることです。
 本ドキュメントでは、モデリング環境からFMUを生成する方法については規定していません。
 
-[.underline]#FMI for Model Exchange#インターフェースは、 [underline]#微分方程式#、 [underline]#代数方程式#、[.underline]#離散時間方程式#で記述される動的システムのモデルに対するインターフェースを定義します。
+[.underline]#FMI for Model Exchange# インターフェースは、 [underline]#微分方程式#、 [underline]#代数方程式#、[underline]#離散時間方程式#で記述される動的システムのモデルに対するインターフェースを定義します。
 このインターフェースは、さまざまな [underline]#シミュレーション環境#や [underline]#組み込み制御システム#において、明示的または暗黙的な積分器、固定または可変のステップサイズで、必要に応じてこれらの方程式を評価するためのインターフェースを提供します。
 インターフェースは、大規模なモデルの記述を可能にするように設計されています。
 
@@ -23,7 +23,7 @@ FMUは独自のソルバーを持つこともあれば（「コ・シミュレ�
 特に、以下の点です。
 
 - [.underline]#FMIアプリケーションプログラミングインターフェース（C）# +
-すべての必要な方程式やツールカップリング計算は、標準化された[.underline]#C関数#を呼び出して評価されます。
+すべての必要な方程式やツールカップリング計算は、標準化された[underline]#C関数#を呼び出して評価されます。
 C言語は、現在最もポータブルなプログラミング言語であり、すべての組み込み制御システムで使用できる唯一のプログラミング言語であるため、C言語を使用しています。
 
 - [.underline]#FMI記述スキーマ(XML)# +
@@ -178,44 +178,33 @@ FMIはC++ではなくCでエンコードされています。
 理由:コンパイラやリンカに依存する動作の問題を避けるためです。
 組み込みターゲットでFMUを実行します。
 
-This version of the functional mock-up interface does
-[.underline]#not# have the following desirable properties.
-They might be added in a future version.
-
-本バージョンの機能的モックアップ・インターフェースは、以下の望ましい特性を持って[.underline]#いません#。
+本バージョンの機能的モックアップ・インターフェースは、以下の望ましい特性を持って[underline]#いません#。
 これらは将来のバージョンで追加されるかもしれません。
 
-- The FMI for Model Exchange is for ordinary differential equations (ODEs) in state space form.
-It is not for a general differential-algebraic equation system.
-However, algebraic equation systems inside the FMU are supported
-(for example, the FMU can report to the environment to re-run the current step
-with a smaller step size since a solution could not be found for an algebraic equation system).
+- FMI for Model Exchangeは、状態空間形式の常微分方程式（ODE）を対象としています。
+一般的な微分代数方程式系のためのものではありません。
+しかし、FMU内部の代数方程式系はサポートされています（例えば、FMUは、代数方程式系の解が見つからなかったので、より小さなステップサイズで現在のステップを再実行するように環境に報告することができます）。
 
-- Special features that might be useful for multibody system programs,
-like SIMPACK, are not included.
+- SIMPACKのようなマルチボディシステムプログラムに役立つ特別な機能は含まれていません。
 
-- The interface is for simulation and for embedded systems.
-Properties that might be additionally
-needed for trajectory optimization,
-for example, derivatives of the model with respect to parameters
-during continuous integration are not included.
+- このインターフェースは、シミュレーションと組み込みシステムのためのものです。
+軌道最適化のために追加で必要となる可能性のあるプロパティ、例えば、連続的な統合中のパラメータに関するモデルの微分などは含まれていません。
 
-- No explicit definition of the variable hierarchy in the XML file.
+- XMLファイルでは、変数の階層を明示的に定義していません。
 
-- The number of states and number of event indicators are fixed for an FMU and cannot be changed.
+- FMUでは、ステート数とイベントインジケータの数は固定されており、変更することはできません。
 
-=== Acknowledgements
+=== 謝辞
 
-Until Dec. 2011, this work was carried out within the ITEA2 MODELISAR project (project number: ITEA2-07006, https://itea3.org/project/modelisar.html).
+2011 年 12 月まで，本研究は ITEA2 MODELISAR プロジェクト（プロジェクト番号：ITEA2-07006, https://itea3.org/project/modelisar.html）の中で行われました。
 
-Daimler AG, DLR, ITI GmbH, Martin Luther University Halle-Wittenberg, QTronic GmbH and SIMPACK AG thank BMBF for partial funding of this work within MODELISAR (BMBF Förderkennzeichen: 01lS0800x).
+Daimler AG，DLR，ITI GmbH，Martin Luther University Halle-Wittenberg，QTronic GmbH，SIMPACK AG は，MODELISAR 内での本研究の部分的な資金提供に対して BMBF に感謝します（BMBF Förderkennzeichen: 01lS0800x）。
 
-Dassault Systèmes (Sweden) thanks the Swedish funding agency VINNOVA (2008-02291) for partial funding of this work within MODELISAR.
+Dassault Systèmes（スウェーデン）は，MODELISARにおける本研究の一部に資金を提供してくれたスウェーデンの助成機関VINNOVA（2008-02291）に感謝します．
 
-LMS Imagine and IFPEN thank DGCIS for partial funding of this work within MODELISAR.
+LMS ImagineおよびIFPENは，DGCISがMODELISAR内の本研究に一部資金を提供してくれたことに感謝します。
+2012年9月から2015年11月まで、本研究の一部はITEA2 MODRIOプロジェクト（プロジェクト番号：ITEA 2-11004, https://itea3.org/project/modrio.html）の中で行われています。
 
-Since Sept. 2012 until Nov. 2015, this work is partially carried out within the ITEA2 MODRIO project (project number: ITEA 2-11004, https://itea3.org/project/modrio.html).
-
-- DLR, ITI GmbH, QTronic GmbH and SIMPACK AG thank BMBF for partial funding of this work within MODRIO (BMBF Förderkennzeichen: 01IS12022E).
-- Dassault Systèmes (Sweden), Linköping University and Modelon AB thank the Swedish funding agency VINNOVA (2012--01157) for partial funding of this work within MODRIO.
-- Siemens PLM Software (France) and IFPEN thank DGCIS for partial funding of this work within MODRIO.
+- DLR，ITI GmbH，QTronic GmbH，SIMPACK AG は，BMBF から MODRIO 内の本研究の一部の資金提供を受けたことに感謝します（BMBF Förderkennzeichen: 01IS12022E）。
+- Dassault Systèmes（スウェーデン），Linköping University，Modelon ABは，MODRIOにおける本研究の一部を助成してくれたスウェーデンの助成機関VINNOVA（2012--01157）に感謝します。
+- シーメンスPLMソフトウェア（フランス）とIFPENは，DGCISによるMODRIO内の作業に対する部分的な資金提供に感謝します。

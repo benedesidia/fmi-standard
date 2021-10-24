@@ -155,74 +155,64 @@ FMUとターゲット・シミュレータの間でFMIを介して通信を行�
 避けるため）と、スカラー量の代わりにベクトルを交換することによって実現されています。
 
 [role=indented]
-_Small footprint_: A compiled FMU (the executable) is small.
-Reason: An FMU may run on an ECU (Electronic Control Unit,
-for example, a microprocessor),
-and ECUs have strong memory limitations.
-This is achieved by storing signal attributes
-(names, units, etc.)
-and all other static information not needed for model evaluation in a separate text file
-(= Model Description File)
-that is not needed on the microprocessor where the executable might run.
+_小さなフットプリント_: 
+コンパイルされたFMU（実行ファイル）は小さい。
+理由：FMUは、ECU（Electronic Control Unit、マイクロプロセッサなど）上で動作する場合があり、
+ECUには強いメモリ制限があります。そのため、信号の属性（名称、単位など）やモデル評価に
+必要のない静的な情報は、実行ファイルが動作する可能性のあるマイクロプロセッサ上では
+不要な別のテキストファイル（＝モデル記述ファイル）に格納することで実現しています。
 
 [role=indented]
-_Hide data structure_:
-The FMI for Model Exchange does not prescribe a data structure (a C struct) to represent a model.
-Reason: the FMI standard shall not unnecessarily restrict or prescribe a
-certain implementation of FMUs or simulators (whichever contains the model data)
-to ease implementation by different tool vendors.
+_データ構造の隠蔽_:
+モデル交換のためのFMIでは、モデルを表現するためのデータ構造（C構造体）を規定していません。
+理由：FMI規格は、異なるツールベンダーによる実装を容易にするために、FMUまたは
+シミュレータ（モデルデータを含むもの）の特定の実装を不必要に制限または規定していません。
 
 [role=indented]
-_Support many and nested FMUs_:
-A simulator may run many FMUs in a single simulation run and/or multiple instances of one FMU.
-The inputs and outputs of these FMUs can be connected with
-direct feedthrough.
-Moreover, an FMU may contain nested FMUs.
+_多数のFMUとネストしたFMUをサポート_:
+シミュレータでは、1回のシミュレーションで多くのFMUを実行したり、1つのFMUの複数のインスタンスを
+実行したりすることができます。
+これらのFMUの入力と出力は、直接フィードスルーで接続することができます。
+さらに、1つのFMUがネストしたFMUを含む場合もあります。
 
 [role=indented]
-_Numerical Robustness_:
-The FMI standard allows that problems which are numerically critical
-(for example, time and state events, multiple sample rates, stiff problems)
-can be treated in a robust way.
+_数値的なロバスト性_:
+FMI規格では、数値的に重要な問題（時間や状態のイベント、複数のサンプルレート、硬い問題など）を
+ロバストな方法で扱うことができます。
 
 [role=indented]
-_Hide cache_:
-A typical FMU will cache computed results for later reuse.
-To simplify usage and to reduce error possibilities by a simulator,
-the caching mechanism is hidden from the usage of the FMU.
-Reason: First, the FMI should not force an FMU to implement a certain caching policy.
-Second, this helps to keep the FMI simple.
-Implementation:
-The FMI provides explicit methods
-(called by the FMU environment)
-for setting properties that invalidate cached data.
-An FMU that chooses to implement a cache may maintain a set of "dirty" flags,
-hidden from the simulator.
-A get method,
-for example to a state, will then either trigger a computation, or return cached data,
-depending on the value of these flags.
+_キャッシュの隠蔽_:
+一般的なFMUでは、計算結果を後で再利用するためにキャッシュします。
+使い方を簡単にするために、また、シミュレータによるエラーの可能性を減らすために、
+キャッシュメカニズムはFMUの使用からは隠されています。
+理由は以下の通りです。第一に、FMIはFMUに特定のキャッシングポリシーの実装を強制してはならない
+ためです。
+第二に、これはFMIをシンプルに保つのに役立ちます。
+実装：FMI は、キャッシュデータを無効にするプロパティを設定するための明示的なメソッド
+（FMU 環境によって呼び出されます）を提供します。
+キャッシュを実装することを選択したFMUは、シミュレータから隠された「ダーティ」フラグのセットを
+維持することができます。
+状態を取得するメソッドなどは、これらのフラグの値に応じて、計算を起動するか、キャッシュされた
+データを返すことになります。
 
 [role=indented]
-_Support numerical solvers_:
-A typical target simulator will use numerical solvers.
-These solvers require vectors for states,
-derivatives and zero-crossing functions.
-The FMU directly fills the values of such vectors provided by the solvers.
-Reason: minimize execution time.
-The exposure of these vectors conflicts somewhat with the "hide data structure" requirement,
-but the efficiency gain justifies this.
+_数値ソルバーのサポート_:
+一般的なターゲットシミュレーターでは、数値ソルバーを使用します。
+これらのソルバーは、状態、導関数、ゼロクロス関数のためのベクターを必要とします。
+FMUは、ソルバーから提供されたそのようなベクトルの値を直接埋めます。理由：実行時間の短縮のためです。
+これらのベクターの公開は、”データ構造の隠蔽"という要件に多少抵触しますが、
+効率化により正当化されます。
 
 [role=indented]
-_Explicit signature_:
-The intended operations, argument types and return values are made explicit in the signature.
-For example, an operator (such as `compute_derivatives`) is not passed as an int
-argument but a special function is called for this.
-The `const` prefix is used for any pointer that should not be changed,
-including `const char*` instead of `char*`.
-Reason: the correct use of the FMI can be checked at compile time
-and allows calling of the C code in a C++ environment
-(which is much stricter on `const` than C is).
-This will help to develop FMUs that use the FMI in the intended way.
+_明示的なシグネチャ_:
+意図した操作、引数の型、戻り値はシグネチャで明示されます。
+例えば，演算子（`compute_derivatives`など）をint型の引数として渡すのではなく、
+そのための特別な関数が呼ばれます．
+また，`char*`ではなく`const char*`など，変更してはいけないポインタには`const`という
+接頭辞が使われます．
+理由: FMIの正しい使用方法をコンパイル時にチェックすることができ（Cよりも`const`に厳しい）、
+C++環境でCコードを呼び出すことができます。
+これにより、意図した方法でFMIを使用するFMUの開発が可能になります。
 
 [role=indented]
 _Few functions_:

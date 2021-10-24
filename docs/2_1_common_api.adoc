@@ -83,63 +83,54 @@ fmi2GetReal`と定義されている関数は、マクロによって以下の�
 したがって，シミュレーション環境では，実際の関数呼び出しのためのコードを生成することで，関連する関数名を構築することができます．
 スタティックリンクライブラリの場合、ライブラリ名はWindowsではMyModel.lib、LinuxではlibMyModel.aとなり、`modelIdentifier`属性がライブラリ名として使用されます。
 
-- If the FMU is shipped with DLL/SharedObject: +
-The constructed function name is `fmi2GetReal`, in other words, it is not changed.
-_[This can be realized in the case of a source code FMU with a target-specific version of `fmi2Functions.h` that does not use FMI2_FUNCTION_PREFIX to construct the function names.]_
-A simulation environment will then dynamically load this library and will explicitly import the function symbols by providing the FMI function names as strings.
-The name of the library is `MyModel.dll` on Windows or `MyModel.so` on Linux;
-in other words the `modelIdentifier` attribute is used as library name.
+- FMUにDLL/SharedObjectが同梱されている場合: +
+構築された関数名は `fmi2GetReal` であり、変更されていません。
+_[これは、ソースコードのFMUが、関数名の構築にFMI2_FUNCTION_PREFIXを使用しないターゲット固有のバージョンの`fmi2Functions.h`を持つ場合に実現できます。]_
+シミュレーション環境は、このライブラリを動的にロードし、FMI関数名を文字列として提供することで、関数シンボルを明示的にインポートします。
+ライブラリの名前は、Windowsでは`MyModel.dll`、Linuxでは`MyModel.so`となり、つまり、`modelIdentifier`属性がライブラリ名として使われます。
 
-_[An FMU can be optionally shipped so that it basically contains only the communication to another tool
-(needsExecutionTool = true, see section 4.3.1).
-This is particularily common for co-simulation tasks.
-In FMI 1.0, the function names are always prefixed with the model name and therefore a DLL/Shared
-Object has to be generated for every model.
-FMI 2.0 improves this situation since model names are no longer used as prefix in case of DLL/Shared Objects:
-Therefore one DLL/Shared Object can be used for all models in case of tool coupling.
-If an FMU is imported into a simulation environment,
-this is usually performed dynamically (based on the FMU name,
-the corresponding FMU is loaded during execution of
-the simulation environment) and then it does not matter whether a model name is prefixed or not.]_
+_[FMUは、基本的に他のツールとの通信のみを含むように、オプションで出荷することができます（needsExecutionTool = true、4.3.1項参照）。
+これは、特に共同シミュレーションタスクでよく見られます。
+FMI 1.0では、関数名の前に常にモデル名が付いているため、モデルごとにDLL/共有オブジェクトを生成する必要があります。
+FMI 2.0では、DLL/共有オブジェクトの場合、モデル名がプレフィックスとして使用されなくなったため、この状況が改善されました。
+したがって、ツールカップリングの場合、1つのDLL/共有オブジェクトをすべてのモデルに使用することができます。
+FMUがシミュレーション環境にインポートされる場合、これは通常、動的に実行され（FMU名に基づいて、シミュレーション環境の実行中に対応するFMUがロードされます）、モデル名がプレフィックスであるかどうかは問題ではありません。
+]_
 
-Since `modelIdentifier` is used as prefix of a C-function name it must fulfill the restrictions on C-function
-names (only letters,
-digits and/or underscores are allowed).
-_[For example, if `modelName = "A.B.C"`, then `modelIdentifier` might be "A_B_C".]_
-Since `modelIdentifier` is also used as name in a
-file system, it must also fulfill the restrictions of the targeted operating system.
-Basically, this means that it should be short.
-For example, the Windows API only supports full path-names of a file up to 260
-characters (see: http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx).
+`modelIdentifier`は、C関数名のプレフィックスとして使用されるので、C関数名の制限を満たさなければなりません（文字、数字、アンダースコアのみが使用可能）。
+_[例えば、`modelName = "A.B.C"`であれば、`modelIdentifier`は "A_B_C "となります。]_
+modelIdentifier`は、ファイルシステムの名前としても使われます。ファイルシステムの名前としても使われるので、対象となるOSの制限を満たす必要があります。
+基本的に、これは短くなければならないことを意味します。
+例えば、WindowsのAPIでは、ファイルのフルパス名を260文字までしかサポートしていません。文字までしかサポートしていません（参照：http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx）。
 
 
-==== Platform Dependent Definitions (fmi2TypesPlatform.h)
+==== プラットフォームに依存する定義 (fmi2TypesPlatform.h)
 
-To simplify porting, no C types are used in the function interfaces,
-but the alias types are defined in this section.
-All definitions in this section are provided in the header file `fmi2TypesPlatform.h`.
+移植を容易にするため、関数のインターフェースにはC言語の型は使用していません。
+しかし，このセクションではエイリアス型が定義されています。
+このセクションのすべての定義は，ヘッダファイル `fmi2TypesPlatform.h` で提供されています。
 
 `#define fmi2TypesPlatform "default"`
 
-A definition that can be inquired with `fmi2GetTypesPlatform`.
-It is used to uniquely identify the header file used for compilation of a binary.
-_[The "default" definition below is suitable for most common platforms.
-It is recommended to use this "default" definition for all binary FMUs.
-Only for source code FMUs, a change might be useful in some cases.]_:
+fmi2GetTypesPlatform`で問い合わせることができる定義です。
+バイナリのコンパイルに使用するヘッダファイルを一意に識別するために使用されます。
+_[以下の「デフォルト」定義は、ほとんどの一般的なプラットフォームに適しています。
+すべてのバイナリFMUにこの「デフォルト」定義を使用することをお勧めします。
+ソースコードFMUに限っては、場合によっては変更が有効なことがあります。]_:
 
 ----
-fmi2Component           : an opaque object pointer
-fmi2ComponentEnvironment: an opaque object pointer
-fmi2FMUstate            : an opaque object pointer
-fmi2ValueReference      : value handle type
-fmi2Real                : real data type
-fmi2Integer             : integer data type
-fmi2Boolean             : datatype to be used with fmi2True and fmi2False
-fmi2Char                : character data type (size of one character)
-fmi2String              : pointer to a vector of fmi2Char characters
-                          ('\0' terminated, UTF-8 encoded)
-fmi2Byte                : smallest addressable unit of the machine
-                          (typically one byte)
+fmi2Component           : 不透明なオブジェクトポインタ
+fmi2ComponentEnvironment: 不透明なオブジェクトポインタ
+fmi2FMUstate            : 不透明なオブジェクトポインタ
+fmi2ValueReference      : 値のハンドル型
+fmi2Real                : リアルデータ型
+fmi2Integer             : 整数データ型
+fmi2Boolean             : fmi2Trueおよびfmi2Falseで使用されるデータ型
+fmi2Char                : 文字データ型（1文字の大きさ）
+fmi2String              : fmi2Char文字のベクトルへのポインタ
+                          (UTF-8エンコードのヌル終端文字列'\0')
+fmi2Byte                : マシンの最小アドレス単位
+                          (通常1バイト)
 ----
 
 [source, C]
@@ -147,51 +138,43 @@ fmi2Byte                : smallest addressable unit of the machine
 typedef void* fmi2Component;
 ----
 
-This is a pointer to an FMU specific data structure that contains the information needed to
-process the model equations or to process the co-simulation of the respective slave.
-This data structure is implemented by the environment that provides the FMU;
-in other words, the calling environment does not know its content, and
-the code to process it must be provided by the FMU
-generation environment and must be shipped with the FMU.
+これは、モデルの方程式を処理したり、それぞれのスレーブのコ・シミュレーションを処理するために必要な情報を含むFMU固有のデータ構造へのポインタです。
+このデータ構造は、FMUを提供する環境によって実装されます。
+言い換えれば、呼び出した環境はその内容を知らず、それを処理するコードはFMU生成環境が提供し、FMUと共に出荷されなければならないということです。
 
 [source, C]
 ----
 typedef void* fmi2ComponentEnvironment;
 ----
 
-This is a pointer to a data structure in the simulation environment that calls the FMU.
-Using this pointer, data from the `modelDescription.xml` file
-_[for example, mapping of `valueReference`pass:[s] to variable names]_
-can be transferred between the simulation environment and the `logger` function (see section 2.1.5).
+これは，FMUを呼び出すシミュレーション環境のデータ構造へのポインタです．
+このポインタを使って，`modelDescription.xml`ファイルのデータ_[例えば、`valueReference`pass:[s]の変数名へのマッピング。]_をシミュレーション環境と`logger`関数（2.1.5項参照）の間で転送することができます．
 
 [source, C]
 ----
 typedef void* fmi2FMUstate;
 ----
 
-This is a pointer to a data structure in the FMU that saves the internal FMU state of the actual or a previous time instant.
-This allows to restart a simulation from a previous FMU state (see section 2.1.8).
-
+FMUの内部状態を保存するデータ構造へのポインタで、実際の時間または前の時間の瞬間のFMUの内部状態を保存します。
+これにより、前回のFMUの状態からシミュレーションを再開することができます（2.1.8項参照）。
 
 [source, C]
 ----
 typedef unsigned int fmi2ValueReference;
 ----
 
-This is a handle to a (base type) variable value of the model.
-Handle and base type (such as `fmi2Real`) uniquely identify the value of a variable.
-Variables of the same base type that have the same handle, always have identical values,
-but other parts of the variable definition might be different _[for example, min/max attributes]_.
+これは、モデルの(ベースタイプ)変数値へのハンドルです。
+ハンドルとベースタイプ（`fmi2Real`など）は、変数の値を一意に識別します。
+同じハンドルを持つ同じベースタイプの変数は、常に同一の値を持ちます。しかし、変数の定義の他の部分は異なる場合があります。 _[例えば、min/max属性]_.
 
-All structured entities, such as records or arrays,
-are "flattened" into a set of scalar values of type `fmi2Real`, `fmi2Integer` etc.
-An `fmi2ValueReference` references one such scalar.
-The coding of `fmi2ValueReference` is a "secret" of the environment that generated the FMU.
-The interface to the equations only provides access to variables via this handle.
-Extracting concrete information about a variable is specific to the used environment that reads the Model Description File in which the value handles are defined.
-If a function in the following sections is called with a wrong `fmi2ValueReference` value
-_[for example, setting a constant with a `fmi2SetReal(..)` function call]_,
-then the function has to return with an error ( `fmi2Status = fmi2Error`, see section 2.1.3).
+レコードや配列などの構造化されたエンティティはすべて，`fmi2Real`や`fmi2Integer`などのスカラ値の集合に "フラット化 "されます．
+fmi2ValueReference`はそのようなスカラの一つを参照します。
+fmi2ValueReference`のコーディングは，FMUを生成した環境の "秘密 "です．
+方程式のインターフェイスでは，このハンドルを介して変数にアクセスすることしかできません．
+変数の具体的な情報を抽出するには、値のハンドルが定義されているモデル記述ファイルを読み込んだ使用環境に特有のものとなります。
+以下のセクションの関数が間違った`fmi2ValueReference`の値で呼び出された場合は
+_[例えば、`fmi2SetReal(...)`関数の呼び出しで定数を設定する場合などです]_,
+その場合、この関数はエラー（`fmi2Status = fmi2Error`、セクション2.1.3参照）で返さなければなりません。
 
 [source, C]
 ----
@@ -208,27 +191,19 @@ typedef char fmi2Byte;    // Data type for the smallest addressable
 #define fmi2False 0
 ----
 
-These are the basic data types used in the interfaces of the C functions.
-More data types might be included in future versions of the interface.
-In order to keep flexibility, especially for embedded systems or for high performance computers,
-the exact data types or the word length of a number are not standardized.
-Instead, the precise definition (in other words, the header file `fmi2TypesPlatform.h`) is provided by the environment where the FMU shall be used.
-In most cases, the definition above will be used.
-If the target environment has different definitions and the FMU is distributed in binary format,
-it must be newly compiled and linked with this target header file.
+これらは、C関数のインターフェースで使用される基本的なデータ型です。
+将来のバージョンのインターフェースでは、さらに多くのデータ型が追加される可能性があります。柔軟性を保つために，特に組み込みシステムや高性能コンピュータのために，正確なデータ型や数値のワード長は標準化されていません．
+代わりに、正確な定義（言い換えれば、ヘッダファイル `fmi2TypesPlatform.h`）は、FMUが使用される環境によって提供されます。ほとんどの場合、上記の定義が使われます。
+ターゲット環境の定義が異なり、FMUがバイナリ形式で配布されている場合は、このターゲットヘッダーファイルを用いて新たにコンパイルおよびリンクする必要があります。
 
-If an `fmi2String` variable is passed as [underline]#input# argument to an FMI function and the FMU needs to use the string later,
-the FMI function must copy the string before it returns and store it in the internal FMU memory,
-because there is no guarantee for the lifetime of the string after the function has returned.
+fmi2String`変数がFMI関数の[underline]#input#引数として渡され、FMUがその文字列を後で使用する必要がある場合、FMI関数は関数が戻る前にその文字列をコピーし、FMUの内部メモリに保存しなければなりません。
 
-If an `fmi2String` variable is passed as [underline]#output# argument from an FMI function and the string shall be used in the target environment,
-the target environment must copy the whole string (not only the pointer).
-The memory of this string may be deallocated by the next call to any of the FMI interface functions. (The string memory might also be just a buffer, that is reused.)
+FMI関数の[underline]#output#引数として`fmi2String`変数が渡され、その文字列がターゲット環境で使用される場合、ターゲット環境は（ポインタだけでなく）文字列全体をコピーする必要があります。
+この文字列のメモリは、いずれかのFMIインターフェース関数の次の呼び出しによって解放される可能性があります。(文字列のメモリは、再利用される単なるバッファの場合もあります)。
 
 
-==== Status Returned by Functions
-This section defines the `status` flag (an enumeration of type `fmi2Status` defined in file
-`fmi2FunctionTypes.h` ) that is returned by all functions to indicate the success of the function call:
+==== 関数が返すステータス
+このセクションでは、すべての関数が返す `status` フラグ (ファイル `fmi2FunctionTypes.h` で定義されている `fmi2Status` 型の列挙型) を定義します。ファイル`fmi2FunctionTypes.h`で定義されている`fmi2Status`型の列挙）を定義します。
 
 
 [source, C]
@@ -241,95 +216,76 @@ typedef enum { fmi2OK,
                fmi2Pending } fmi2Status;
 ----
 
-Status returned by functions.
-The status has the following meaning
+関数が返すステータス。
+ステータスの意味は以下の通りです。
 
-- `fmi2OK` - all well.
+- `fmi2OK` - すべて順調
 
-- `fmi2Warning` - things are not quite right, but the computation can continue.
-Function `logger` was called in the model (see below), and it is expected that
-this function has shown the prepared information message to the user.
+- `fmi2Warning` - 完全に正しくありませんが、計算は続行できます。
+モデルの中では，関数`logger`が呼び出されており（下記参照），この関数が用意した情報メッセージをユーザに表示したことが予想されます。
 
-- `fmi2Discard` - this return status is only possible if explicitly defined for the corresponding function
-footnote:[Functions `fmi2SetXXX` are usually not performing calculations but just store the passed values in internal buffers.
-The actual calculation is performed by `fmi2GetXXX` functions.
-Still `fmi2SetXXX` functions could check whether the input arguments are in their validity range.
-If not, these functions could return with `fmi2Discard`.]:
+- `fmi2Discard` - この戻り値は、対応する関数で明示的に定義されている場合のみ可能です footnote:[関数 `fmi2SetXXX` は通常、計算を行わず、渡された値を内部バッファに格納するだけです。
+実際の計算は`fmi2GetXXX`関数が行います。
+しかし、`fmi2SetXXX`関数は、入力された引数が有効範囲内にあるかどうかをチェックすることができます。
+そうでない場合、これらの関数は `fmi2Discard` で返すことができます。]:
 (ModelExchange: `fmi2SetReal`, `fmi2SetInteger`, `fmi2SetBoolean`, `fmi2SetString`,
 `fmi2SetContinuousStates`, `fmi2GetReal`, `fmi2GetDerivatives`,
 `fmi2GetContinuousStates`, `fmi2GetEventIndicators`;
 CoSimulation: `fmi2SetReal`, `fmi2SetInteger`, `fmi2SetBoolean`, `fmi2SetString`, `fmi2DoStep`,
 `fmiGetXXXStatus` ): +
-For "model exchange": It is recommended to perform a smaller step size and evaluate the model
-equations again, for example because an iterative solver in the model did not converge or because a
-function is outside of its domain [for example, `sqrt(<negative number>)`].
-If this is not possible, the simulation has to be terminated. +
-For "co-simulation": `fmi2Discard` is returned also if the slave is not able to return the required
-status information.
-The master has to decide if the simulation run can be continued. +
-In both cases, function `logger` was called in the FMU (see below), and it is expected that this
-function has shown the prepared information message to the user if the FMU was called in debug
-mode (`loggingOn = fmi2True`).
-Otherwise, `logger` should not show a message.
+「モデル交換」の場合：モデルの反復ソルバーが収束しなかった場合や、モデルの方程式を再度評価する場合など、ステップサイズを小さくして実行することが推奨されます。モデルの反復ソルバーが収束しなかった場合や、関数が領域外にある場合（例：`sqrt(<負の数>)`）などには 例えば、モデル内の反復ソルバーが収束しなかった場合や、関数がその領域外にある場合（例：`sqrt(<負の数>)`）などです。
+これができない場合は、シミュレーションを終了しなければなりません。 +
+「co-simulation」の場合：スレーブが必要なステータス情報を返せなかった場合も、`fmi2Discard`を返します。ステータス情報を返すことができない場合にも返されます。
+マスターは、シミュレーションの実行を継続できるかどうかを判断する必要があります。 +
+いずれの場合も、FMUでは関数`logger`が呼び出されており（下記参照）、FMUがデバッグモード（`loggingOn = fmi2True`）で呼び出された場合には、この関数が用意された情報メッセージをユーザーに表示していることが予想されます。
+それ以外の場合は、`logger`はメッセージを表示してはいけません。
 
-- `fmi2Error` - the FMU encountered an error.
-The simulation cannot be continued with this FMU instance.
-If one of the functions returns `fmi2Error`,
-it can be tried to restart the simulation from a formerly stored FMU state by calling `fmi2SetFMUstate`.
-This can be done if the capability flag `canGetAndSetFMUstate` is true and
-`fmi2GetFMUstate` was called before in non-erroneous state.
-If not, the simulation cannot be continued and `fmi2FreeInstance` or `fmi2Reset` [.underline]#must# be called
-afterwards.footnote:[Typically, `fmi2Error` return is for non-numerical reasons, like "disk full".
-There might be cases where the environment can fix such errors (eventually with the help oft the user),
-and then simulation can continue at the last consistent state defined with `fmi2SetFMUstate`.] +
-Further processing is possible after this call;
-especially other FMU instances are not affected.
-Function `logger` was called in the FMU (see below), and it is expected that this function has shown
-the prepared information message to the user.
+- `fmi2Error` - FMUにエラーが発生しました。
+このFMUインスタンスでは、シミュレーションを続行できません。
+いずれかの関数が `fmi2Error` を返した場合は、`fmi2SetFMUstate` を呼び出して、以前に保存した FMU の状態からシミュレーションを再開することができます。
+これは、ケイパビリティフラグの `canGetAndSetFMUstate` が真であり、`fmi2GetFMUstate` が以前にエラーにならない状態で呼び出されていた場合に実行できます。
+footnote:[通常、`fmi2Error`は「ディスクが一杯です」などの数字にならない理由で返されます。
+fmi2SetFMUstate`で定義された最後の一貫した状態でシミュレーションを続行することができます。]。+
+特に他のFMUインスタンスは影響を受けません。
+FMUでは、関数`logger`が呼び出されており（下記参照）、この関数が用意された情報メッセージをユーザーに表示していることが予想されます。
 
-- `fmi2Fatal` - the model computations are irreparably corrupted for all FMU instances.
-_[For example, due to a run-time exception such as access violation or integer division by zero during the execution of an fmi function]_.
-Function `logger` was called in the FMU (see below), and it is expected that this
-function has shown the prepared information message to the user.
-It is not possible to call any other function for any of the FMU instances.
+- `fmi2Fatal` - すべての FMU インスタンスでモデル計算が修復不可能なほど破損します。
+_[例えば、fmi関数の実行中に、アクセス違反や整数のゼロ除算などのランタイム例外が発生したため]_です。
+FMUで関数`logger`が呼び出され（下記参照）、この関数が用意した情報メッセージをユーザーに表示したことが予想されます。
+FMUのどのインスタンスに対しても、他の関数を呼び出すことはできません。
 
-- `fmi2Pending` - this status is returned only from the co-simulation interface,
-if the slave executes the function in an asynchronous way.
-That means the slave starts to compute but returns immediately.
-The master has to call `fmi2GetStatus(..., fmi2DoStepStatus)` to determine
-if the slave has finished the computation.
-Can be returned only by `fmi2DoStep` and by `fmi2GetStatus` (see section 4.2.3).
+- `fmi2Pending` - このステータスは、スレーブが非同期で関数を実行した場合に、コ・シミュレーションのインターフェースからのみ返されます。
+つまり，スレーブが計算を開始してもすぐに戻ってくるということです．
+マスターはスレーブが計算を終了したかどうかを判断するために、`fmi2GetStatus(..., fmi2DoStepStatus)`を呼び出す必要があります。
+fmi2DoStep`と`fmi2GetStatus`(4.2.3項参照)でのみ返すことができます。
 
 
-==== Inquire Platform and Version Number of Header Files
+==== ヘッダーファイルのプラットフォームとバージョン番号の照会
 
-This section documents functions to inquire information about the header files used to compile its functions.
+このセクションでは、関数のコンパイルに使用されたヘッダーファイルの情報を照会するために、関数を文書化します。
 
 [source, C]
 ----
 const char* fmi2GetTypesPlatform(void);
 ----
 
-Returns the string to uniquely identify the `fmi2TypesPlatform.h`
-header file used for compilation of the functions of the FMU.
-The function returns a pointer to a static string specified by `fmi2TypesPlatform`
-defined in this header file.
-The standard header file, as documented in this specification,
-has `fmi2TypesPlatform` set to `default` (so this function usually returns `default`).
+FMUの機能のコンパイルに用いられるヘッダファイル `fmi2TypesPlatform.h` を一意に識別するための文字列を返します。
+この関数は，このヘッダファイルで定義されている `fmi2TypesPlatform` で指定される静的な文字列へのポインタを返します．
+本仕様書に記載されている標準的なヘッダファイルでは，`fmi2TypesPlatform`が`default`に設定されています（したがって，この関数は通常`default`を返します）．
 
 [source, C]
 ----
 const char* fmi2GetVersion(void);
 ----
 
-Returns the version of the `fmi2Functions.h` header file which was used to compile the functions of the FMU.
-The function returns `fmiVersion` which is defined in this header file.
-The standard header file as documented in this specification has version `"2.0"` (so this function usually returns `"2.0"`).
+FMUの関数をコンパイルする際に使用したヘッダファイル `fmi2Functions.h` のバージョンを返します。
+この関数は、このヘッダファイルで定義されている `fmiVersion` を返します。
+本仕様書に記載されている標準的なヘッダファイルのバージョンは `"2.0"` です（したがって、この関数は通常 `"2.0"` を返します）。
 
 
-==== Creation, Destruction and Logging of FMU Instances
+==== FMUインスタンスの作成、破棄、ログの記録
 
-This section documents functions that deal with instantiation, destruction and logging of FMUs.
+ここでは、FMUのインスタンス化、破壊、ロギングに対応する機能について説明します。
 
 [source, C]
 ----
@@ -349,29 +305,24 @@ typedef enum {fmi2ModelExchange,
              }fmi2Type;
 ----
 
-The function returns a new instance of an FMU.
-If a null pointer is returned, then instantiation failed.
-In that case, `functions->logger` is called with detailed information about the reason.
-An FMU can be instantiated many times (provided capability flag `canBeInstantiatedOnlyOncePerProcess = false`).
+この関数は，FMU の新しいインスタンスを返します。
+もし，NULLポインタが返された場合には，インスタンスの生成に失敗したことになります．
+この場合，`functions->logger` が呼ばれ，その理由に関する詳細な情報が表示されます．
+FMUは何度でもインスタンスを作成することができます（ケイパビリティフラグ`canBeInstantiatedOnlyOncePerProcess = false`があれば）。
 
-This function must be called successfully before any of the following functions can be called.
-For co-simulation, this function call has to perform all actions of a slave which are necessary
-before a simulation run starts (for example, loading the model file, compilation...).
+以下の関数を呼び出す前に、この関数が正常に呼び出される必要があります。
+共同シミュレーションの場合、この関数の呼び出しは、シミュレーションの実行を開始する前に必要なスレーブのすべてのアクションを実行する必要があります（たとえば、モデルファイルの読み込み、コンパイルなど）。
 
-Argument `instanceName` is a unique identifier for the FMU instance.
-It is used to name the instance,
-for example, in error or information messages generated by one of the `fmi2XXX` functions.
-It is not allowed to provide a null pointer and this string must be non-empty
-(in other words, must have at least one character that is no white space).
-_[If only one FMU is simulated, as instanceName attribute `modelName` or
-`<ModelExchange/CoSimulation modelIdentifier="..">` from the XML schema `fmiModelDescription` might be used.]_
+引数 `instanceName` は、FMUインスタンスの一意の識別子です。
+これは、例えば、`fmi2XXX`関数のいずれかによって生成されたエラーまたは情報メッセージの中で、インスタンスの名前を付けるために使用されます。
+また、この文字列は空であってはなりません（言い換えれば、少なくとも1つの文字が空白であってはなりません）。
+_[1つのFMUのみをシミュレートする場合、instanceName属性として`modelName`またはXMLスキーマ`fmiModelDescription`の`<ModelExchange/CoSimulation modelIdentifier="...">`が使用されるかもしれません]_。
 
-Argument `fmuType` defines the type of the FMU:
+引数 `fmuType` は、FMUのタイプを定義します。:
 
-- = `fmi2ModelExchange`: FMU with initialization and events;
-between events simulation of continuous systems is performed with
-external integrators from the environment (see section 3).
-- = `fmi2CoSimulation`: Black box interface for co-simulation (see section 4).
+- = `fmi2ModelExchange`: FMUの初期化とイベント;
+連続したシステムのイベント間シミュレーションは、環境からの外部インテグレータを用いて 環境からの外部インテグレーターを用いて行われます（セクション3参照）。
+- = `fmi2CoSimulation`: コ・シミュレーションのためのブラックボックス・インターフェース（セクション4参照）。
 
 Argument `fmuGUID` is used to check that the `modelDescription.xml` file
 (see section 2.3) is compatible with the C code of the FMU.
